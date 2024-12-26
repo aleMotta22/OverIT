@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">OverIT Demo</string>
+
+
+    <string name="search">Ricerca Immagini</string>
+
 </resources>

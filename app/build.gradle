@@ -9,6 +9,7 @@ android {
 
     buildFeatures {
         buildConfig true
+        viewBinding true
     }
 
     defaultConfig {
@@ -25,12 +26,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            def KEY_FLICKR = "f10f2682e20f5a65e51fa947ed49e745"
-            def SEGRET = "b9784211603bb5de"
+            buildConfigField "String", "KEY_FLICKR", "\"f10f2682e20f5a65e51fa947ed49e745\""
         }
-        debug{
-            def KEY_FLICKR = "f10f2682e20f5a65e51fa947ed49e745"
-            def SEGRET = "b9784211603bb5de"
+        debug {
+            buildConfigField "String", "KEY_FLICKR", "\"f10f2682e20f5a65e51fa947ed49e745\""
         }
     }
     compileOptions {
@@ -41,13 +40,14 @@ android {
 
 dependencies {
 
-    implementation 'commons-codec:commons-codec:1.17.0'
-
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.swipe
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
 }

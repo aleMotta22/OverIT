@@ -1,20 +1,18 @@
 package it.motta.overit.models;
 
-public class FlickrAuth {
+import java.io.Serializable;
 
-    private String key,segret;
+public class FlickrAuth implements Serializable {
 
-    public FlickrAuth(String key, String segret){
+    private String key;
+
+    public FlickrAuth(String key) {
         this.key = key;
-        this.segret = segret;
     }
 
-    public String getKey(){
+    public String getKey() {
         return key;
     }
 
-    public String getSegret(){
-        return segret;
-    }
 
 }

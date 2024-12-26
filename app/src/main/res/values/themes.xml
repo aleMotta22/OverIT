@@ -2,6 +2,14 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.OverIT" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="background">@color/background</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:titleTextColor">@color/textColor</item>
+
+
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 

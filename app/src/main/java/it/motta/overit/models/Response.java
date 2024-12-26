@@ -2,28 +2,28 @@ package it.motta.overit.models;
 
 import org.json.JSONObject;
 
-public abstract class Response {
+public class Response {
 
-   private int code;
-   private JSONObject jsonObject;
-   private String message;
+    private int code;
+    private JSONObject jsonObject;
+    private String message;
 
-   public Response(int code, JSONObject jsonObject, String message){
-       this.code = code;
-       this.jsonObject = jsonObject;
-       this.message = message;
-   }
+    public Response(int code, JSONObject jsonObject, String message) {
+        this.code = code;
+        this.jsonObject = jsonObject;
+        this.message = message;
+    }
 
-   public int getCode(){
-       return code;
-   }
+    public int getCode() {
+        return code;
+    }
 
-   public JSONObject getJsonObject(){
-       return jsonObject;
-   }
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
 
-   public String getMessage(){
-       return message;
-   }
+    public String getMessage() {
+        return message;
+    }
 
 }
