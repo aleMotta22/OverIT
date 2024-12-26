@@ -1,0 +1,53 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+
+    namespace 'it.motta.overit'
+    compileSdk 34
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    defaultConfig {
+        applicationId "it.motta.overit"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            def KEY_FLICKR = "f10f2682e20f5a65e51fa947ed49e745"
+            def SEGRET = "b9784211603bb5de"
+        }
+        debug{
+            def KEY_FLICKR = "f10f2682e20f5a65e51fa947ed49e745"
+            def SEGRET = "b9784211603bb5de"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+
+    implementation 'commons-codec:commons-codec:1.17.0'
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.activity
+    implementation libs.constraintlayout
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+}
