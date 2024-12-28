@@ -4,7 +4,7 @@ public enum InternalError {
 
     GENERIC_ERROR(-500);
 
-   private int code;
+    private final int code;
 
     InternalError(int code) {
         this.code = code;
@@ -12,10 +12,6 @@ public enum InternalError {
 
     public int getCode() {
         return code;
-    }
-
-    public String getMessage() {
-        return this.name();
     }
 
 }
