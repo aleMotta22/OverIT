@@ -6,16 +6,30 @@ import java.util.List;
 
 public class FilterImage implements Serializable {
 
-    private int perPage, currPage, totalPages;
+    private static final int MAX_PER_PAGE = 50;
+
+    private final int perPage;
+    private final List<String> tags;
+
+    private int currPage,totalPages;
     private String searchText;
-    private List<String> tags;
+    private boolean isFirstLoad;
 
     public FilterImage(String searchText, List<String> tags) {
         this.currPage = 1;
-        this.perPage = 50;
+        this.perPage = MAX_PER_PAGE;
         this.searchText = searchText;
         this.tags = tags;
         this.totalPages = 0;
+        this.isFirstLoad = true;
+    }
+
+    public boolean isFirstLoad() {
+        return isFirstLoad;
+    }
+
+    public void setFirstLoad(boolean isFirstLoad) {
+        this.isFirstLoad = isFirstLoad;
     }
 
     public void setTotalPages(int totalPages) {

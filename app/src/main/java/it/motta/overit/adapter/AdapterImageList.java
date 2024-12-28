@@ -1,5 +1,6 @@
 package it.motta.overit.adapter;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +22,13 @@ import it.motta.overit.databinding.FlickerImageListBinding;
 import it.motta.overit.models.FlickerImage;
 import it.motta.overit.models.IloadImage;
 
+@SuppressLint("NotifyDataSetChanged")
 public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.ViewHolder> implements View.OnClickListener {
 
     private boolean isGrid;
 
     private final ArrayList<FlickerImage> flickerImages;
-    private final HashMap<Long, Bitmap> bitmapPreview, bitmapImage;
+    private final HashMap<Long, Bitmap> bitmapPreview;
     private final View.OnClickListener handler;
     protected int lastClicked;
 
@@ -34,7 +36,6 @@ public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.View
         this.flickerImages = flickerImages;
         this.handler = handler;
         this.bitmapPreview = new HashMap<>();
-        this.bitmapImage = new HashMap<>();
         this.lastClicked = -1;
         this.isGrid = isGrid;
     }
@@ -45,6 +46,7 @@ public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.View
         View root = isGrid ? FlickerImageGridBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false).getRoot() : FlickerImageListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false).getRoot();
         return new ViewHolder(root);
     }
+
 
     public void updateGrid(boolean isGrid) {
         this.isGrid = isGrid;
@@ -57,7 +59,7 @@ public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.View
         holder.cardMain.setOnClickListener(this);
         holder.cardMain.setTag(position);
         holder.imgLink.setVisibility(View.INVISIBLE);
-        new Thread(new IloadImage(holder.cardMain.getContext(), image, bitmapPreview, IloadImage.LoadType.PREVIEW, holder.imgLink)).start();
+        new Thread(new IloadImage(holder.imgLink.getContext(), image, bitmapPreview, IloadImage.LoadType.PREVIEW, holder.imgLink)).start();
         holder.title.setText(image.getTitle());
     }
 
@@ -79,7 +81,6 @@ public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.View
         flickerImages.clear();
         lastClicked = -1;
         this.bitmapPreview.clear();
-        this.bitmapImage.clear();
         notifyDataSetChanged();
     }
 
@@ -102,7 +103,7 @@ public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.View
     }
 
 
-    protected class ViewHolder extends RecyclerView.ViewHolder {
+    protected  class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView imgLink;
         private final TextView title;

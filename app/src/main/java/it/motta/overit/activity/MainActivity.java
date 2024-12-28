@@ -1,5 +1,6 @@
 package it.motta.overit.activity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import it.motta.overit.R;
@@ -22,6 +24,7 @@ import it.motta.overit.adapter.AdapterImageList;
 import it.motta.overit.controllers.OverItController;
 import it.motta.overit.databinding.ActivityMainBinding;
 import it.motta.overit.databinding.ContentMainBinding;
+import it.motta.overit.dialogs.DetailsImageDialog;
 import it.motta.overit.interfaces.IloadImagesListner;
 import it.motta.overit.models.FilterImage;
 import it.motta.overit.models.FlickerImage;
@@ -32,9 +35,9 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
     private ActivityMainBinding bindingMain;
     private ContentMainBinding bindingContent;
     private AdapterImageList adapter;
+    private HashMap<Long, Bitmap> bitmapImag;
 
     private FilterImage filter;
-    private boolean mFirstLoader = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +49,12 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         filter = new FilterImage("", new ArrayList<>());
+        bitmapImag = new HashMap<>();
         bindingContent.searchBar.setOnKeyListener((v, actionId, keyEvent) -> {
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && actionId == KeyEvent.KEYCODE_ENTER) {
                 if (filter.setSearchText(bindingContent.searchBar.getText().toString().trim())) {
                     adapter.clear();
+                    bitmapImag.clear();
                     new LoadImageWorkers(filter, this).execute();
                 }
             }
@@ -61,10 +66,7 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
-        adapter = new AdapterImageList(new ArrayList<>(), v -> {
-            Toast.makeText(this, adapter.getItemClicked().getTitle(), Toast.LENGTH_SHORT).show();
-        }, true);
-        load();
+        adapter = new AdapterImageList(new ArrayList<>(), v -> new DetailsImageDialog(this, adapter.getItemClicked(), bitmapImag).show(), true);
         bindingContent.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -74,10 +76,9 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (!mFirstLoader) {
+                if (!filter.isFirstLoad()) {
                     filter.increasePage();
                     if (!recyclerView.canScrollVertically(1) && filter.canLoadMore()) {
-
                         new LoadImageWorkers(filter, MainActivity.this).execute();
                     }
                 }
@@ -88,13 +89,14 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
             filter.resetPage();
             new LoadImageWorkers(filter, this).execute();
         });
+        load();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("filter", filter);
-        outState.putSerializable("position", bindingContent.recyclerView.getVerticalScrollbarPosition());
+        outState.putSerializable("position", getPosLastView());
         outState.putSerializable("itemsLoad", adapter.getItems());
     }
 
@@ -104,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
         this.filter = (FilterImage) savedInstanceState.getSerializable("filter");
         adapter.addItems((ArrayList<FlickerImage>) savedInstanceState.getSerializable("itemsLoad"));
         load();
-        bindingContent.recyclerView.setVerticalScrollbarPosition(savedInstanceState.getInt("position"));
+        if (adapter.getItemCount() > 0)
+            bindingContent.recyclerView.smoothScrollToPosition(savedInstanceState.getInt("position"));
     }
 
     private void load() {
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
         adapter.addItems(images);
         bindingContent.swipeRefresh.setRefreshing(false);
         filter.setTotalPages(totalPages);
-        this.mFirstLoader = false;
+        filter.setFirstLoad(false);
     }
 
     @Override
@@ -144,8 +147,24 @@ public class MainActivity extends AppCompatActivity implements IloadImagesListne
         if (item.getItemId() == R.id.gridList) {
             OverItController.SaveLastGridView(this, !OverItController.GetLastGridView(this));
             item.setIcon(OverItController.GetLastGridView(this) ? R.drawable.ic_list : R.drawable.ic_grid);
+            int pos = getPosLastView();
             load();
+            if (adapter.getItemCount() > 0)
+                bindingContent.recyclerView.smoothScrollToPosition(pos);
         }
         return false;
     }
+
+
+    private int getPosLastView() {
+        int pos = 0;
+        if (adapter.getItemCount() > 0) {
+            if (bindingContent.recyclerView.getLayoutManager() instanceof LinearLayoutManager)
+                pos = ((LinearLayoutManager) bindingContent.recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+            else if (bindingContent.recyclerView.getLayoutManager() instanceof GridLayoutManager)
+                pos = ((GridLayoutManager) bindingContent.recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+        }
+        return pos;
+    }
+
 }

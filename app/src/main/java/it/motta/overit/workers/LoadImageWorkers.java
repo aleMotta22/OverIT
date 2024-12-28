@@ -21,6 +21,7 @@ public class LoadImageWorkers extends AsyncTask<Void, Void, Response> {
     private final IloadImagesListner listener;
 
     public LoadImageWorkers(FilterImage filter, IloadImagesListner listener) {
+        super();
         this.filter = filter;
         this.listener = listener;
     }

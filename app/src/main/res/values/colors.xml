@@ -6,7 +6,8 @@
     <color name="colorPrimary">#620CB1</color>
     <color name="colorPrimaryDark">#4C038E</color>
     <color name="colorAccent">#C50D50</color>
-    <color name="background">#F5F5F5</color>
+    <color name="background">#E4E4E4</color>
+    <color name="grayDivider">#8C8C8C</color>
 
     <color name="textColor">#F5F5F5</color>
 

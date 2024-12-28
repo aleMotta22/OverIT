@@ -1,7 +1,5 @@
 package it.motta.overit.models;
 
-import android.graphics.Bitmap;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,8 +12,8 @@ public class FlickerImage implements Serializable {
 
     private static final String URL_IMAGE_FORMAT = "https://live.staticflickr.com/%s/%s_%s_%s.jpg";
 
-    private long id;
-    private int server, farm;
+    private final long id;
+    private final int server, farm;
     private final String owner, secret, title;
     private String description, username, taken;
 
@@ -26,6 +24,9 @@ public class FlickerImage implements Serializable {
         this.secret = jsonObject.getString("secret");
         this.owner = jsonObject.getString("owner");
         this.title = jsonObject.getString("title");
+        this.description = "";
+        this.username = "";
+        this.taken = "";
     }
 
     public long getId() {
@@ -39,7 +40,11 @@ public class FlickerImage implements Serializable {
         this.owner = owner;
         this.secret = secret;
         this.title = title;
+        this.description = "";
+        this.username = "";
+        this.taken = "";
     }
+
 
     public URL getUrlPreview() throws MalformedURLException {
         return new URL(String.format(URL_IMAGE_FORMAT, server, id, secret, "q"));
@@ -53,17 +58,29 @@ public class FlickerImage implements Serializable {
         return title;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getTaken() {
+        return taken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     public void setDetail(JSONObject jsonObject) throws JSONException {
         JSONObject data = jsonObject.has("owner") ? jsonObject.getJSONObject("owner") : null;
         if (data != null && data.has("username"))
             this.username = data.getString("username");
         data = jsonObject.has("description") ? jsonObject.getJSONObject("description") : null;
         if (data != null && data.has("_content"))
-            this.description = jsonObject.getString("_content");
+            this.description = data.getString("_content");
 
         data = jsonObject.has("dates") ? jsonObject.getJSONObject("dates") : null;
         if (data != null && data.has("taken"))
-            this.taken = jsonObject.getString("taken");
+            this.taken = data.getString("taken");
 
     }
 

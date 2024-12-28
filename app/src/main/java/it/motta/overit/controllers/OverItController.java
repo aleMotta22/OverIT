@@ -3,8 +3,6 @@ package it.motta.overit.controllers;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.prefs.Preferences;
-
 public class OverItController {
 
     private static SharedPreferences sharedPreferences;

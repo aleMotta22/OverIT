@@ -4,9 +4,9 @@ import org.json.JSONObject;
 
 public class Response {
 
-    private int code;
-    private JSONObject jsonObject;
-    private String message;
+    private final int code;
+    private final JSONObject jsonObject;
+    private final String message;
 
     public Response(int code, JSONObject jsonObject, String message) {
         this.code = code;

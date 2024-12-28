@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import it.motta.overit.BuildConfig;
 import it.motta.overit.activity.OverItApp;
 import it.motta.overit.models.FilterImage;
 import it.motta.overit.models.FlickerImage;
@@ -37,11 +38,12 @@ public class ApiFlickrController {
         params.put("method", METHOD_SEARCH_PHOTOS);
         params.put("api_key", OverItApp.auth.getKey());
         params.putAll(filter.getParams());
-        URL url = new URL(REST + "?" + loadParam(params));
+        String urlRest = REST + "?" + loadParam(params);
+        if (BuildConfig.DEBUG)
+            Log.d("REST", urlRest);
+        URL url = new URL(urlRest);
         HttpsURLConnection httpURLConnection = (HttpsURLConnection) url.openConnection();
         httpURLConnection.setRequestMethod("GET");
-        Log.i("STATUS", String.valueOf(httpURLConnection.getResponseCode()));
-        Log.i("MSG", httpURLConnection.getResponseMessage());
         JSONObject jsonObject = traduceObject(httpURLConnection);
         return new Response(httpURLConnection.getResponseCode(), jsonObject, httpURLConnection.getResponseMessage());
     }
@@ -52,17 +54,23 @@ public class ApiFlickrController {
         params.put("method", METHOD_INFO_PHOTO);
         params.put("api_key", OverItApp.auth.getKey());
         params.putAll(image.getParam());
-        URL url = new URL(REST + "?" + loadParam(params));
+        String urlRest = REST + "?" + loadParam(params);
+        if (BuildConfig.DEBUG)
+            Log.d("REST", urlRest);
+        URL url = new URL(urlRest);
         HttpsURLConnection httpURLConnection = (HttpsURLConnection) url.openConnection();
         httpURLConnection.setRequestMethod("GET");
-        Log.i("STATUS", String.valueOf(httpURLConnection.getResponseCode()));
-        Log.i("MSG", httpURLConnection.getResponseMessage());
+
         JSONObject jsonObject = traduceObject(httpURLConnection);
         return new Response(httpURLConnection.getResponseCode(), jsonObject, httpURLConnection.getResponseMessage());
     }
 
-    private static JSONObject traduceObject(HttpsURLConnection httpURLConnection) {
+    private static JSONObject traduceObject(HttpsURLConnection httpURLConnection) throws IOException {
         StringBuilder result = new StringBuilder();
+        if (BuildConfig.DEBUG) {
+            Log.i("STATUS", String.valueOf(httpURLConnection.getResponseCode()));
+            Log.i("MSG", httpURLConnection.getResponseMessage());
+        }
         JSONObject jsonObject = null;
         BufferedReader bufferedReader;
         try {
@@ -83,10 +91,11 @@ public class ApiFlickrController {
                     jsonObject = new JSONObject("{\"result\": \"" + result + "\"}");
             }
         } catch (Exception ex) {
+            if (BuildConfig.DEBUG)
+                ex.printStackTrace();
         }
         return jsonObject;
     }
-
 
     private static String loadParam(HashMap<String, String> params) {
         StringBuilder result = new StringBuilder();
@@ -97,7 +106,8 @@ public class ApiFlickrController {
                 result.append(URLEncoder.encode(value, "UTF-8"));
                 result.append("&");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                if (BuildConfig.DEBUG)
+                    e.printStackTrace();
             }
         });
         return result.toString().substring(0, result.length() - 1);

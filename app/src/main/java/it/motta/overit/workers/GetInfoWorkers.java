@@ -17,6 +17,7 @@ public class GetInfoWorkers extends AsyncTask<Void, Void, Response> {
     private final ICompleteLoading listener;
 
     public GetInfoWorkers(FlickerImage image, ICompleteLoading listener) {
+        super();
         this.image = image;
         this.listener = listener;
     }
@@ -37,6 +38,7 @@ public class GetInfoWorkers extends AsyncTask<Void, Void, Response> {
             try {
                 image.setDetail(response.getJsonObject().getJSONObject("photo"));
                 listener.complete();
+                return;
             } catch (Exception ex) {
                 response = new Response(InternalError.GENERIC_ERROR.getCode(), null, ex.getMessage());
             }
